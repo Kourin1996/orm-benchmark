@@ -20,11 +20,13 @@ All package run in no-cache mode.
 * [beego/orm](https://github.com/astaxie/beego/tree/master/orm)
 * [sqlx](https://github.com/jmoiron/sqlx) (in preparation)
 * [xorm](https://github.com/xormplus/xorm)
+
+* [ent](https://github.com/ent/ent)
 	
 ### Run
 
 ```go
-go get github.com/milkpod29/orm-benchmark
+go get github.com/Kourin1996/orm-benchmark
 # build
 go install
 # all
