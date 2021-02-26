@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 	"github.com/Kourin1996/orm-benchmark/ent/schema"
 )
 
@@ -11,22 +11,22 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	modelFields := schema.Model{}.Fields()
-	_ = modelFields
-	// modelDescName is the schema descriptor for name field.
-	modelDescName := modelFields[0].Descriptor()
-	// model.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	model.NameValidator = modelDescName.Validators[0].(func(string) error)
-	// modelDescTitle is the schema descriptor for title field.
-	modelDescTitle := modelFields[1].Descriptor()
-	// model.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	model.TitleValidator = modelDescTitle.Validators[0].(func(string) error)
-	// modelDescFax is the schema descriptor for fax field.
-	modelDescFax := modelFields[2].Descriptor()
-	// model.FaxValidator is a validator for the "fax" field. It is called by the builders before save.
-	model.FaxValidator = modelDescFax.Validators[0].(func(string) error)
-	// modelDescWeb is the schema descriptor for web field.
-	modelDescWeb := modelFields[3].Descriptor()
-	// model.WebValidator is a validator for the "web" field. It is called by the builders before save.
-	model.WebValidator = modelDescWeb.Validators[0].(func(string) error)
+	modelsFields := schema.Models{}.Fields()
+	_ = modelsFields
+	// modelsDescName is the schema descriptor for name field.
+	modelsDescName := modelsFields[0].Descriptor()
+	// models.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	models.NameValidator = modelsDescName.Validators[0].(func(string) error)
+	// modelsDescTitle is the schema descriptor for title field.
+	modelsDescTitle := modelsFields[1].Descriptor()
+	// models.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	models.TitleValidator = modelsDescTitle.Validators[0].(func(string) error)
+	// modelsDescFax is the schema descriptor for fax field.
+	modelsDescFax := modelsFields[2].Descriptor()
+	// models.FaxValidator is a validator for the "fax" field. It is called by the builders before save.
+	models.FaxValidator = modelsDescFax.Validators[0].(func(string) error)
+	// modelsDescWeb is the schema descriptor for web field.
+	modelsDescWeb := modelsFields[3].Descriptor()
+	// models.WebValidator is a validator for the "web" field. It is called by the builders before save.
+	models.WebValidator = modelsDescWeb.Validators[0].(func(string) error)
 }

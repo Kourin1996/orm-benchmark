@@ -2,11 +2,13 @@ package benchs
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 
 	"github.com/Kourin1996/orm-benchmark/ent"
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/migrate"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 )
 
 var entdb *ent.Client
@@ -29,16 +31,41 @@ func init() {
 	}
 }
 
+func initEntDb() {
+	sqls := []string{`DROP TABLE IF EXISTS models;`}
+
+	DB, err := sql.Open("postgres", ORM_SOURCE)
+	checkErr(err)
+	defer DB.Close()
+	err = DB.Ping()
+	checkErr(err)
+
+	for _, sql := range sqls {
+		_, err = DB.Exec(sql)
+		checkErr(err)
+	}
+
+	ctx := context.Background()
+	err = entdb.Schema.Create(
+		ctx,
+		migrate.WithDropIndex(true),
+		migrate.WithDropColumn(true),
+	)
+	if err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
+}
+
 func EntInsert(b *B) {
 	var m *Model
 	wrapExecute(b, func() {
-		initDB()
+		initEntDb()
 		m = NewModel()
 	})
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		_, err := entdb.Model.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter).Save(ctx)
+		_, err := entdb.Models.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter).Save(ctx)
 
 		if err != nil {
 			fmt.Println(err)
@@ -49,18 +76,18 @@ func EntInsert(b *B) {
 
 func EntInsertMulti(b *B) {
 	wrapExecute(b, func() {
-		initDB()
+		initEntDb()
 	})
 
 	for i := 0; i < b.N; i++ {
-		bulk := make([]*ent.ModelCreate, 100)
+		bulk := make([]*ent.ModelsCreate, 100)
 		for i := 0; i < 100; i++ {
 			m := NewModel()
-			bulk[i] = entdb.Model.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter)
+			bulk[i] = entdb.Models.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter)
 		}
 
 		ctx := context.Background()
-		_, err := entdb.Model.CreateBulk(bulk...).Save(ctx)
+		_, err := entdb.Models.CreateBulk(bulk...).Save(ctx)
 
 		if err != nil {
 			fmt.Println(err)
@@ -71,13 +98,13 @@ func EntInsertMulti(b *B) {
 
 func EntUpdate(b *B) {
 	var m *Model
-	var entModel *ent.Model
+	var entModel *ent.Models
 	wrapExecute(b, func() {
-		initDB()
+		initEntDb()
 		m = NewModel()
 
 		ctx := context.Background()
-		em, err := entdb.Model.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter).Save(ctx)
+		em, err := entdb.Models.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter).Save(ctx)
 		entModel = em
 
 		if err != nil {
@@ -98,13 +125,15 @@ func EntUpdate(b *B) {
 
 func EntRead(b *B) {
 	var m *Model
+	var entM *ent.Models
 
 	wrapExecute(b, func() {
-		initDB()
+		initEntDb()
 		m = NewModel()
 
 		ctx := context.Background()
-		_, err := entdb.Model.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter).Save(ctx)
+		res, err := entdb.Models.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter).Save(ctx)
+		entM = res
 
 		if err != nil {
 			fmt.Println(err)
@@ -114,7 +143,9 @@ func EntRead(b *B) {
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		_, err := entdb.Model.Query().First(ctx)
+		_, err := entdb.Models.Query().Where(
+			models.ID(entM.ID),
+		).First(ctx)
 
 		if err != nil {
 			fmt.Println(err)
@@ -125,16 +156,16 @@ func EntRead(b *B) {
 
 func EntReadSlice(b *B) {
 	wrapExecute(b, func() {
-		initDB()
+		initEntDb()
 
-		bulk := make([]*ent.ModelCreate, 100)
+		bulk := make([]*ent.ModelsCreate, 100)
 		for i := 0; i < 100; i++ {
 			m := NewModel()
-			bulk[i] = entdb.Model.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter)
+			bulk[i] = entdb.Models.Create().SetName(m.Name).SetTitle(m.Title).SetFax(m.Fax).SetWeb(m.Web).SetAge(m.Age).SetRight(m.Right).SetCounter(m.Counter)
 		}
 
 		ctx := context.Background()
-		_, err := entdb.Model.CreateBulk(bulk...).Save(ctx)
+		_, err := entdb.Models.CreateBulk(bulk...).Save(ctx)
 
 		if err != nil {
 			fmt.Println(err)
@@ -144,8 +175,8 @@ func EntReadSlice(b *B) {
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		_, err := entdb.Model.Query().Where(
-			model.IDGT(0),
+		_, err := entdb.Models.Query().Where(
+			models.IDGT(0),
 		).Limit(100).All(ctx)
 
 		if err != nil {

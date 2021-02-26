@@ -11,62 +11,62 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 	"github.com/Kourin1996/orm-benchmark/ent/predicate"
 )
 
-// ModelQuery is the builder for querying Model entities.
-type ModelQuery struct {
+// ModelsQuery is the builder for querying Models entities.
+type ModelsQuery struct {
 	config
 	limit      *int
 	offset     *int
 	order      []OrderFunc
 	fields     []string
-	predicates []predicate.Model
+	predicates []predicate.Models
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the ModelQuery builder.
-func (mq *ModelQuery) Where(ps ...predicate.Model) *ModelQuery {
+// Where adds a new predicate for the ModelsQuery builder.
+func (mq *ModelsQuery) Where(ps ...predicate.Models) *ModelsQuery {
 	mq.predicates = append(mq.predicates, ps...)
 	return mq
 }
 
 // Limit adds a limit step to the query.
-func (mq *ModelQuery) Limit(limit int) *ModelQuery {
+func (mq *ModelsQuery) Limit(limit int) *ModelsQuery {
 	mq.limit = &limit
 	return mq
 }
 
 // Offset adds an offset step to the query.
-func (mq *ModelQuery) Offset(offset int) *ModelQuery {
+func (mq *ModelsQuery) Offset(offset int) *ModelsQuery {
 	mq.offset = &offset
 	return mq
 }
 
 // Order adds an order step to the query.
-func (mq *ModelQuery) Order(o ...OrderFunc) *ModelQuery {
+func (mq *ModelsQuery) Order(o ...OrderFunc) *ModelsQuery {
 	mq.order = append(mq.order, o...)
 	return mq
 }
 
-// First returns the first Model entity from the query.
-// Returns a *NotFoundError when no Model was found.
-func (mq *ModelQuery) First(ctx context.Context) (*Model, error) {
+// First returns the first Models entity from the query.
+// Returns a *NotFoundError when no Models was found.
+func (mq *ModelsQuery) First(ctx context.Context) (*Models, error) {
 	nodes, err := mq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{model.Label}
+		return nil, &NotFoundError{models.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (mq *ModelQuery) FirstX(ctx context.Context) *Model {
+func (mq *ModelsQuery) FirstX(ctx context.Context) *Models {
 	node, err := mq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -74,22 +74,22 @@ func (mq *ModelQuery) FirstX(ctx context.Context) *Model {
 	return node
 }
 
-// FirstID returns the first Model ID from the query.
-// Returns a *NotFoundError when no Model ID was found.
-func (mq *ModelQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first Models ID from the query.
+// Returns a *NotFoundError when no Models ID was found.
+func (mq *ModelsQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = mq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (mq *ModelQuery) FirstIDX(ctx context.Context) int {
+func (mq *ModelsQuery) FirstIDX(ctx context.Context) int {
 	id, err := mq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -97,10 +97,10 @@ func (mq *ModelQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Model entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one Model entity is not found.
-// Returns a *NotFoundError when no Model entities are found.
-func (mq *ModelQuery) Only(ctx context.Context) (*Model, error) {
+// Only returns a single Models entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when exactly one Models entity is not found.
+// Returns a *NotFoundError when no Models entities are found.
+func (mq *ModelsQuery) Only(ctx context.Context) (*Models, error) {
 	nodes, err := mq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
@@ -109,14 +109,14 @@ func (mq *ModelQuery) Only(ctx context.Context) (*Model, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{model.Label}
+		return nil, &NotFoundError{models.Label}
 	default:
-		return nil, &NotSingularError{model.Label}
+		return nil, &NotSingularError{models.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (mq *ModelQuery) OnlyX(ctx context.Context) *Model {
+func (mq *ModelsQuery) OnlyX(ctx context.Context) *Models {
 	node, err := mq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -124,10 +124,10 @@ func (mq *ModelQuery) OnlyX(ctx context.Context) *Model {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Model ID in the query.
-// Returns a *NotSingularError when exactly one Model ID is not found.
+// OnlyID is like Only, but returns the only Models ID in the query.
+// Returns a *NotSingularError when exactly one Models ID is not found.
 // Returns a *NotFoundError when no entities are found.
-func (mq *ModelQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (mq *ModelsQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = mq.Limit(2).IDs(ctx); err != nil {
 		return
@@ -136,15 +136,15 @@ func (mq *ModelQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = &NotSingularError{model.Label}
+		err = &NotSingularError{models.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (mq *ModelQuery) OnlyIDX(ctx context.Context) int {
+func (mq *ModelsQuery) OnlyIDX(ctx context.Context) int {
 	id, err := mq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -152,8 +152,8 @@ func (mq *ModelQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Models.
-func (mq *ModelQuery) All(ctx context.Context) ([]*Model, error) {
+// All executes the query and returns a list of ModelsSlice.
+func (mq *ModelsQuery) All(ctx context.Context) ([]*Models, error) {
 	if err := mq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func (mq *ModelQuery) All(ctx context.Context) ([]*Model, error) {
 }
 
 // AllX is like All, but panics if an error occurs.
-func (mq *ModelQuery) AllX(ctx context.Context) []*Model {
+func (mq *ModelsQuery) AllX(ctx context.Context) []*Models {
 	nodes, err := mq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -169,17 +169,17 @@ func (mq *ModelQuery) AllX(ctx context.Context) []*Model {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Model IDs.
-func (mq *ModelQuery) IDs(ctx context.Context) ([]int, error) {
+// IDs executes the query and returns a list of Models IDs.
+func (mq *ModelsQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	if err := mq.Select(model.FieldID).Scan(ctx, &ids); err != nil {
+	if err := mq.Select(models.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (mq *ModelQuery) IDsX(ctx context.Context) []int {
+func (mq *ModelsQuery) IDsX(ctx context.Context) []int {
 	ids, err := mq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -188,7 +188,7 @@ func (mq *ModelQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (mq *ModelQuery) Count(ctx context.Context) (int, error) {
+func (mq *ModelsQuery) Count(ctx context.Context) (int, error) {
 	if err := mq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -196,7 +196,7 @@ func (mq *ModelQuery) Count(ctx context.Context) (int, error) {
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (mq *ModelQuery) CountX(ctx context.Context) int {
+func (mq *ModelsQuery) CountX(ctx context.Context) int {
 	count, err := mq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -205,7 +205,7 @@ func (mq *ModelQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (mq *ModelQuery) Exist(ctx context.Context) (bool, error) {
+func (mq *ModelsQuery) Exist(ctx context.Context) (bool, error) {
 	if err := mq.prepareQuery(ctx); err != nil {
 		return false, err
 	}
@@ -213,7 +213,7 @@ func (mq *ModelQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (mq *ModelQuery) ExistX(ctx context.Context) bool {
+func (mq *ModelsQuery) ExistX(ctx context.Context) bool {
 	exist, err := mq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -221,18 +221,18 @@ func (mq *ModelQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the ModelQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the ModelsQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (mq *ModelQuery) Clone() *ModelQuery {
+func (mq *ModelsQuery) Clone() *ModelsQuery {
 	if mq == nil {
 		return nil
 	}
-	return &ModelQuery{
+	return &ModelsQuery{
 		config:     mq.config,
 		limit:      mq.limit,
 		offset:     mq.offset,
 		order:      append([]OrderFunc{}, mq.order...),
-		predicates: append([]predicate.Model{}, mq.predicates...),
+		predicates: append([]predicate.Models{}, mq.predicates...),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -249,13 +249,13 @@ func (mq *ModelQuery) Clone() *ModelQuery {
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Model.Query().
-//		GroupBy(model.FieldName).
+//	client.Models.Query().
+//		GroupBy(models.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
-func (mq *ModelQuery) GroupBy(field string, fields ...string) *ModelGroupBy {
-	group := &ModelGroupBy{config: mq.config}
+func (mq *ModelsQuery) GroupBy(field string, fields ...string) *ModelsGroupBy {
+	group := &ModelsGroupBy{config: mq.config}
 	group.fields = append([]string{field}, fields...)
 	group.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
@@ -275,18 +275,18 @@ func (mq *ModelQuery) GroupBy(field string, fields ...string) *ModelGroupBy {
 //		Name string `json:"name,omitempty"`
 //	}
 //
-//	client.Model.Query().
-//		Select(model.FieldName).
+//	client.Models.Query().
+//		Select(models.FieldName).
 //		Scan(ctx, &v)
 //
-func (mq *ModelQuery) Select(field string, fields ...string) *ModelSelect {
+func (mq *ModelsQuery) Select(field string, fields ...string) *ModelsSelect {
 	mq.fields = append([]string{field}, fields...)
-	return &ModelSelect{ModelQuery: mq}
+	return &ModelsSelect{ModelsQuery: mq}
 }
 
-func (mq *ModelQuery) prepareQuery(ctx context.Context) error {
+func (mq *ModelsQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range mq.fields {
-		if !model.ValidColumn(f) {
+		if !models.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -300,13 +300,13 @@ func (mq *ModelQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (mq *ModelQuery) sqlAll(ctx context.Context) ([]*Model, error) {
+func (mq *ModelsQuery) sqlAll(ctx context.Context) ([]*Models, error) {
 	var (
-		nodes = []*Model{}
+		nodes = []*Models{}
 		_spec = mq.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
-		node := &Model{config: mq.config}
+		node := &Models{config: mq.config}
 		nodes = append(nodes, node)
 		return node.scanValues(columns)
 	}
@@ -326,12 +326,12 @@ func (mq *ModelQuery) sqlAll(ctx context.Context) ([]*Model, error) {
 	return nodes, nil
 }
 
-func (mq *ModelQuery) sqlCount(ctx context.Context) (int, error) {
+func (mq *ModelsQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mq.querySpec()
 	return sqlgraph.CountNodes(ctx, mq.driver, _spec)
 }
 
-func (mq *ModelQuery) sqlExist(ctx context.Context) (bool, error) {
+func (mq *ModelsQuery) sqlExist(ctx context.Context) (bool, error) {
 	n, err := mq.sqlCount(ctx)
 	if err != nil {
 		return false, fmt.Errorf("ent: check existence: %v", err)
@@ -339,14 +339,14 @@ func (mq *ModelQuery) sqlExist(ctx context.Context) (bool, error) {
 	return n > 0, nil
 }
 
-func (mq *ModelQuery) querySpec() *sqlgraph.QuerySpec {
+func (mq *ModelsQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   model.Table,
-			Columns: model.Columns,
+			Table:   models.Table,
+			Columns: models.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: model.FieldID,
+				Column: models.FieldID,
 			},
 		},
 		From:   mq.sql,
@@ -354,9 +354,9 @@ func (mq *ModelQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := mq.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, model.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, models.FieldID)
 		for i := range fields {
-			if fields[i] != model.FieldID {
+			if fields[i] != models.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -377,26 +377,26 @@ func (mq *ModelQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := mq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector, model.ValidColumn)
+				ps[i](selector, models.ValidColumn)
 			}
 		}
 	}
 	return _spec
 }
 
-func (mq *ModelQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (mq *ModelsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(mq.driver.Dialect())
-	t1 := builder.Table(model.Table)
-	selector := builder.Select(t1.Columns(model.Columns...)...).From(t1)
+	t1 := builder.Table(models.Table)
+	selector := builder.Select(t1.Columns(models.Columns...)...).From(t1)
 	if mq.sql != nil {
 		selector = mq.sql
-		selector.Select(selector.Columns(model.Columns...)...)
+		selector.Select(selector.Columns(models.Columns...)...)
 	}
 	for _, p := range mq.predicates {
 		p(selector)
 	}
 	for _, p := range mq.order {
-		p(selector, model.ValidColumn)
+		p(selector, models.ValidColumn)
 	}
 	if offset := mq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -409,8 +409,8 @@ func (mq *ModelQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ModelGroupBy is the group-by builder for Model entities.
-type ModelGroupBy struct {
+// ModelsGroupBy is the group-by builder for Models entities.
+type ModelsGroupBy struct {
 	config
 	fields []string
 	fns    []AggregateFunc
@@ -420,13 +420,13 @@ type ModelGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (mgb *ModelGroupBy) Aggregate(fns ...AggregateFunc) *ModelGroupBy {
+func (mgb *ModelsGroupBy) Aggregate(fns ...AggregateFunc) *ModelsGroupBy {
 	mgb.fns = append(mgb.fns, fns...)
 	return mgb
 }
 
 // Scan applies the group-by query and scans the result into the given value.
-func (mgb *ModelGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (mgb *ModelsGroupBy) Scan(ctx context.Context, v interface{}) error {
 	query, err := mgb.path(ctx)
 	if err != nil {
 		return err
@@ -436,7 +436,7 @@ func (mgb *ModelGroupBy) Scan(ctx context.Context, v interface{}) error {
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (mgb *ModelGroupBy) ScanX(ctx context.Context, v interface{}) {
+func (mgb *ModelsGroupBy) ScanX(ctx context.Context, v interface{}) {
 	if err := mgb.Scan(ctx, v); err != nil {
 		panic(err)
 	}
@@ -444,9 +444,9 @@ func (mgb *ModelGroupBy) ScanX(ctx context.Context, v interface{}) {
 
 // Strings returns list of strings from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Strings(ctx context.Context) ([]string, error) {
+func (mgb *ModelsGroupBy) Strings(ctx context.Context) ([]string, error) {
 	if len(mgb.fields) > 1 {
-		return nil, errors.New("ent: ModelGroupBy.Strings is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ModelsGroupBy.Strings is not achievable when grouping more than 1 field")
 	}
 	var v []string
 	if err := mgb.Scan(ctx, &v); err != nil {
@@ -456,7 +456,7 @@ func (mgb *ModelGroupBy) Strings(ctx context.Context) ([]string, error) {
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (mgb *ModelGroupBy) StringsX(ctx context.Context) []string {
+func (mgb *ModelsGroupBy) StringsX(ctx context.Context) []string {
 	v, err := mgb.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -466,7 +466,7 @@ func (mgb *ModelGroupBy) StringsX(ctx context.Context) []string {
 
 // String returns a single string from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) String(ctx context.Context) (_ string, err error) {
+func (mgb *ModelsGroupBy) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = mgb.Strings(ctx); err != nil {
 		return
@@ -475,15 +475,15 @@ func (mgb *ModelGroupBy) String(ctx context.Context) (_ string, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelGroupBy.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsGroupBy.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (mgb *ModelGroupBy) StringX(ctx context.Context) string {
+func (mgb *ModelsGroupBy) StringX(ctx context.Context) string {
 	v, err := mgb.String(ctx)
 	if err != nil {
 		panic(err)
@@ -493,9 +493,9 @@ func (mgb *ModelGroupBy) StringX(ctx context.Context) string {
 
 // Ints returns list of ints from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Ints(ctx context.Context) ([]int, error) {
+func (mgb *ModelsGroupBy) Ints(ctx context.Context) ([]int, error) {
 	if len(mgb.fields) > 1 {
-		return nil, errors.New("ent: ModelGroupBy.Ints is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ModelsGroupBy.Ints is not achievable when grouping more than 1 field")
 	}
 	var v []int
 	if err := mgb.Scan(ctx, &v); err != nil {
@@ -505,7 +505,7 @@ func (mgb *ModelGroupBy) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (mgb *ModelGroupBy) IntsX(ctx context.Context) []int {
+func (mgb *ModelsGroupBy) IntsX(ctx context.Context) []int {
 	v, err := mgb.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -515,7 +515,7 @@ func (mgb *ModelGroupBy) IntsX(ctx context.Context) []int {
 
 // Int returns a single int from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Int(ctx context.Context) (_ int, err error) {
+func (mgb *ModelsGroupBy) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = mgb.Ints(ctx); err != nil {
 		return
@@ -524,15 +524,15 @@ func (mgb *ModelGroupBy) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelGroupBy.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsGroupBy.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (mgb *ModelGroupBy) IntX(ctx context.Context) int {
+func (mgb *ModelsGroupBy) IntX(ctx context.Context) int {
 	v, err := mgb.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -542,9 +542,9 @@ func (mgb *ModelGroupBy) IntX(ctx context.Context) int {
 
 // Float64s returns list of float64s from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Float64s(ctx context.Context) ([]float64, error) {
+func (mgb *ModelsGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 	if len(mgb.fields) > 1 {
-		return nil, errors.New("ent: ModelGroupBy.Float64s is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ModelsGroupBy.Float64s is not achievable when grouping more than 1 field")
 	}
 	var v []float64
 	if err := mgb.Scan(ctx, &v); err != nil {
@@ -554,7 +554,7 @@ func (mgb *ModelGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (mgb *ModelGroupBy) Float64sX(ctx context.Context) []float64 {
+func (mgb *ModelsGroupBy) Float64sX(ctx context.Context) []float64 {
 	v, err := mgb.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -564,7 +564,7 @@ func (mgb *ModelGroupBy) Float64sX(ctx context.Context) []float64 {
 
 // Float64 returns a single float64 from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Float64(ctx context.Context) (_ float64, err error) {
+func (mgb *ModelsGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = mgb.Float64s(ctx); err != nil {
 		return
@@ -573,15 +573,15 @@ func (mgb *ModelGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelGroupBy.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsGroupBy.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (mgb *ModelGroupBy) Float64X(ctx context.Context) float64 {
+func (mgb *ModelsGroupBy) Float64X(ctx context.Context) float64 {
 	v, err := mgb.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -591,9 +591,9 @@ func (mgb *ModelGroupBy) Float64X(ctx context.Context) float64 {
 
 // Bools returns list of bools from group-by.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Bools(ctx context.Context) ([]bool, error) {
+func (mgb *ModelsGroupBy) Bools(ctx context.Context) ([]bool, error) {
 	if len(mgb.fields) > 1 {
-		return nil, errors.New("ent: ModelGroupBy.Bools is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ModelsGroupBy.Bools is not achievable when grouping more than 1 field")
 	}
 	var v []bool
 	if err := mgb.Scan(ctx, &v); err != nil {
@@ -603,7 +603,7 @@ func (mgb *ModelGroupBy) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (mgb *ModelGroupBy) BoolsX(ctx context.Context) []bool {
+func (mgb *ModelsGroupBy) BoolsX(ctx context.Context) []bool {
 	v, err := mgb.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -613,7 +613,7 @@ func (mgb *ModelGroupBy) BoolsX(ctx context.Context) []bool {
 
 // Bool returns a single bool from a group-by query.
 // It is only allowed when executing a group-by query with one field.
-func (mgb *ModelGroupBy) Bool(ctx context.Context) (_ bool, err error) {
+func (mgb *ModelsGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = mgb.Bools(ctx); err != nil {
 		return
@@ -622,15 +622,15 @@ func (mgb *ModelGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelGroupBy.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsGroupBy.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (mgb *ModelGroupBy) BoolX(ctx context.Context) bool {
+func (mgb *ModelsGroupBy) BoolX(ctx context.Context) bool {
 	v, err := mgb.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -638,9 +638,9 @@ func (mgb *ModelGroupBy) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (mgb *ModelGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (mgb *ModelsGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range mgb.fields {
-		if !model.ValidColumn(f) {
+		if !models.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
 		}
 	}
@@ -657,43 +657,43 @@ func (mgb *ModelGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	return sql.ScanSlice(rows, v)
 }
 
-func (mgb *ModelGroupBy) sqlQuery() *sql.Selector {
+func (mgb *ModelsGroupBy) sqlQuery() *sql.Selector {
 	selector := mgb.sql
 	columns := make([]string, 0, len(mgb.fields)+len(mgb.fns))
 	columns = append(columns, mgb.fields...)
 	for _, fn := range mgb.fns {
-		columns = append(columns, fn(selector, model.ValidColumn))
+		columns = append(columns, fn(selector, models.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(mgb.fields...)
 }
 
-// ModelSelect is the builder for selecting fields of Model entities.
-type ModelSelect struct {
-	*ModelQuery
+// ModelsSelect is the builder for selecting fields of Models entities.
+type ModelsSelect struct {
+	*ModelsQuery
 	// intermediate query (i.e. traversal path).
 	sql *sql.Selector
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (ms *ModelSelect) Scan(ctx context.Context, v interface{}) error {
+func (ms *ModelsSelect) Scan(ctx context.Context, v interface{}) error {
 	if err := ms.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ms.sql = ms.ModelQuery.sqlQuery(ctx)
+	ms.sql = ms.ModelsQuery.sqlQuery(ctx)
 	return ms.sqlScan(ctx, v)
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (ms *ModelSelect) ScanX(ctx context.Context, v interface{}) {
+func (ms *ModelsSelect) ScanX(ctx context.Context, v interface{}) {
 	if err := ms.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Strings(ctx context.Context) ([]string, error) {
+func (ms *ModelsSelect) Strings(ctx context.Context) ([]string, error) {
 	if len(ms.fields) > 1 {
-		return nil, errors.New("ent: ModelSelect.Strings is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ModelsSelect.Strings is not achievable when selecting more than 1 field")
 	}
 	var v []string
 	if err := ms.Scan(ctx, &v); err != nil {
@@ -703,7 +703,7 @@ func (ms *ModelSelect) Strings(ctx context.Context) ([]string, error) {
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (ms *ModelSelect) StringsX(ctx context.Context) []string {
+func (ms *ModelsSelect) StringsX(ctx context.Context) []string {
 	v, err := ms.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -712,7 +712,7 @@ func (ms *ModelSelect) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) String(ctx context.Context) (_ string, err error) {
+func (ms *ModelsSelect) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = ms.Strings(ctx); err != nil {
 		return
@@ -721,15 +721,15 @@ func (ms *ModelSelect) String(ctx context.Context) (_ string, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelSelect.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsSelect.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (ms *ModelSelect) StringX(ctx context.Context) string {
+func (ms *ModelsSelect) StringX(ctx context.Context) string {
 	v, err := ms.String(ctx)
 	if err != nil {
 		panic(err)
@@ -738,9 +738,9 @@ func (ms *ModelSelect) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Ints(ctx context.Context) ([]int, error) {
+func (ms *ModelsSelect) Ints(ctx context.Context) ([]int, error) {
 	if len(ms.fields) > 1 {
-		return nil, errors.New("ent: ModelSelect.Ints is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ModelsSelect.Ints is not achievable when selecting more than 1 field")
 	}
 	var v []int
 	if err := ms.Scan(ctx, &v); err != nil {
@@ -750,7 +750,7 @@ func (ms *ModelSelect) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (ms *ModelSelect) IntsX(ctx context.Context) []int {
+func (ms *ModelsSelect) IntsX(ctx context.Context) []int {
 	v, err := ms.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -759,7 +759,7 @@ func (ms *ModelSelect) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Int(ctx context.Context) (_ int, err error) {
+func (ms *ModelsSelect) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = ms.Ints(ctx); err != nil {
 		return
@@ -768,15 +768,15 @@ func (ms *ModelSelect) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelSelect.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsSelect.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (ms *ModelSelect) IntX(ctx context.Context) int {
+func (ms *ModelsSelect) IntX(ctx context.Context) int {
 	v, err := ms.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -785,9 +785,9 @@ func (ms *ModelSelect) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Float64s(ctx context.Context) ([]float64, error) {
+func (ms *ModelsSelect) Float64s(ctx context.Context) ([]float64, error) {
 	if len(ms.fields) > 1 {
-		return nil, errors.New("ent: ModelSelect.Float64s is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ModelsSelect.Float64s is not achievable when selecting more than 1 field")
 	}
 	var v []float64
 	if err := ms.Scan(ctx, &v); err != nil {
@@ -797,7 +797,7 @@ func (ms *ModelSelect) Float64s(ctx context.Context) ([]float64, error) {
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (ms *ModelSelect) Float64sX(ctx context.Context) []float64 {
+func (ms *ModelsSelect) Float64sX(ctx context.Context) []float64 {
 	v, err := ms.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -806,7 +806,7 @@ func (ms *ModelSelect) Float64sX(ctx context.Context) []float64 {
 }
 
 // Float64 returns a single float64 from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Float64(ctx context.Context) (_ float64, err error) {
+func (ms *ModelsSelect) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = ms.Float64s(ctx); err != nil {
 		return
@@ -815,15 +815,15 @@ func (ms *ModelSelect) Float64(ctx context.Context) (_ float64, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelSelect.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsSelect.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (ms *ModelSelect) Float64X(ctx context.Context) float64 {
+func (ms *ModelsSelect) Float64X(ctx context.Context) float64 {
 	v, err := ms.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -832,9 +832,9 @@ func (ms *ModelSelect) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Bools(ctx context.Context) ([]bool, error) {
+func (ms *ModelsSelect) Bools(ctx context.Context) ([]bool, error) {
 	if len(ms.fields) > 1 {
-		return nil, errors.New("ent: ModelSelect.Bools is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ModelsSelect.Bools is not achievable when selecting more than 1 field")
 	}
 	var v []bool
 	if err := ms.Scan(ctx, &v); err != nil {
@@ -844,7 +844,7 @@ func (ms *ModelSelect) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (ms *ModelSelect) BoolsX(ctx context.Context) []bool {
+func (ms *ModelsSelect) BoolsX(ctx context.Context) []bool {
 	v, err := ms.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -853,7 +853,7 @@ func (ms *ModelSelect) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from a selector. It is only allowed when selecting one field.
-func (ms *ModelSelect) Bool(ctx context.Context) (_ bool, err error) {
+func (ms *ModelsSelect) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = ms.Bools(ctx); err != nil {
 		return
@@ -862,15 +862,15 @@ func (ms *ModelSelect) Bool(ctx context.Context) (_ bool, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{model.Label}
+		err = &NotFoundError{models.Label}
 	default:
-		err = fmt.Errorf("ent: ModelSelect.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ModelsSelect.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (ms *ModelSelect) BoolX(ctx context.Context) bool {
+func (ms *ModelsSelect) BoolX(ctx context.Context) bool {
 	v, err := ms.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -878,7 +878,7 @@ func (ms *ModelSelect) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (ms *ModelSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (ms *ModelsSelect) sqlScan(ctx context.Context, v interface{}) error {
 	rows := &sql.Rows{}
 	query, args := ms.sqlQuery().Query()
 	if err := ms.driver.Query(ctx, query, args, rows); err != nil {
@@ -888,7 +888,7 @@ func (ms *ModelSelect) sqlScan(ctx context.Context, v interface{}) error {
 	return sql.ScanSlice(rows, v)
 }
 
-func (ms *ModelSelect) sqlQuery() sql.Querier {
+func (ms *ModelsSelect) sqlQuery() sql.Querier {
 	selector := ms.sql
 	selector.Select(selector.Columns(ms.fields...)...)
 	return selector

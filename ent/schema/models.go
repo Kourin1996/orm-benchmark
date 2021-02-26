@@ -5,13 +5,13 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Model holds the schema definition for the Model entity.
-type Model struct {
+// Models holds the schema definition for the Models entity.
+type Models struct {
 	ent.Schema
 }
 
-// Fields of the Model.
-func (Model) Fields() []ent.Field {
+// Fields of the Models.
+func (Models) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty(),
 		field.String("title").NotEmpty(),
@@ -23,7 +23,7 @@ func (Model) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Model.
-func (Model) Edges() []ent.Edge {
+// Edges of the Models.
+func (Models) Edges() []ent.Edge {
 	return nil
 }

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 	"github.com/Kourin1996/orm-benchmark/ent/predicate"
 
 	"entgo.io/ent"
@@ -22,11 +22,11 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeModel = "Model"
+	TypeModels = "Models"
 )
 
-// ModelMutation represents an operation that mutates the Model nodes in the graph.
-type ModelMutation struct {
+// ModelsMutation represents an operation that mutates the Models nodes in the graph.
+type ModelsMutation struct {
 	config
 	op            Op
 	typ           string
@@ -42,21 +42,21 @@ type ModelMutation struct {
 	addcounter    *int64
 	clearedFields map[string]struct{}
 	done          bool
-	oldValue      func(context.Context) (*Model, error)
-	predicates    []predicate.Model
+	oldValue      func(context.Context) (*Models, error)
+	predicates    []predicate.Models
 }
 
-var _ ent.Mutation = (*ModelMutation)(nil)
+var _ ent.Mutation = (*ModelsMutation)(nil)
 
-// modelOption allows management of the mutation configuration using functional options.
-type modelOption func(*ModelMutation)
+// modelsOption allows management of the mutation configuration using functional options.
+type modelsOption func(*ModelsMutation)
 
-// newModelMutation creates new mutation for the Model entity.
-func newModelMutation(c config, op Op, opts ...modelOption) *ModelMutation {
-	m := &ModelMutation{
+// newModelsMutation creates new mutation for the Models entity.
+func newModelsMutation(c config, op Op, opts ...modelsOption) *ModelsMutation {
+	m := &ModelsMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeModel,
+		typ:           TypeModels,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -65,20 +65,20 @@ func newModelMutation(c config, op Op, opts ...modelOption) *ModelMutation {
 	return m
 }
 
-// withModelID sets the ID field of the mutation.
-func withModelID(id int) modelOption {
-	return func(m *ModelMutation) {
+// withModelsID sets the ID field of the mutation.
+func withModelsID(id int) modelsOption {
+	return func(m *ModelsMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *Model
+			value *Models
 		)
-		m.oldValue = func(ctx context.Context) (*Model, error) {
+		m.oldValue = func(ctx context.Context) (*Models, error) {
 			once.Do(func() {
 				if m.done {
 					err = fmt.Errorf("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().Model.Get(ctx, id)
+					value, err = m.Client().Models.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -87,10 +87,10 @@ func withModelID(id int) modelOption {
 	}
 }
 
-// withModel sets the old Model of the mutation.
-func withModel(node *Model) modelOption {
-	return func(m *ModelMutation) {
-		m.oldValue = func(context.Context) (*Model, error) {
+// withModels sets the old Models of the mutation.
+func withModels(node *Models) modelsOption {
+	return func(m *ModelsMutation) {
+		m.oldValue = func(context.Context) (*Models, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -99,7 +99,7 @@ func withModel(node *Model) modelOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ModelMutation) Client() *Client {
+func (m ModelsMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -107,7 +107,7 @@ func (m ModelMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m ModelMutation) Tx() (*Tx, error) {
+func (m ModelsMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
 	}
@@ -118,7 +118,7 @@ func (m ModelMutation) Tx() (*Tx, error) {
 
 // ID returns the ID value in the mutation. Note that the ID
 // is only available if it was provided to the builder.
-func (m *ModelMutation) ID() (id int, exists bool) {
+func (m *ModelsMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -126,12 +126,12 @@ func (m *ModelMutation) ID() (id int, exists bool) {
 }
 
 // SetName sets the "name" field.
-func (m *ModelMutation) SetName(s string) {
+func (m *ModelsMutation) SetName(s string) {
 	m.name = &s
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *ModelMutation) Name() (r string, exists bool) {
+func (m *ModelsMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -139,10 +139,10 @@ func (m *ModelMutation) Name() (r string, exists bool) {
 	return *v, true
 }
 
-// OldName returns the old "name" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *ModelsMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldName is only allowed on UpdateOne operations")
 	}
@@ -157,17 +157,17 @@ func (m *ModelMutation) OldName(ctx context.Context) (v string, err error) {
 }
 
 // ResetName resets all changes to the "name" field.
-func (m *ModelMutation) ResetName() {
+func (m *ModelsMutation) ResetName() {
 	m.name = nil
 }
 
 // SetTitle sets the "title" field.
-func (m *ModelMutation) SetTitle(s string) {
+func (m *ModelsMutation) SetTitle(s string) {
 	m.title = &s
 }
 
 // Title returns the value of the "title" field in the mutation.
-func (m *ModelMutation) Title() (r string, exists bool) {
+func (m *ModelsMutation) Title() (r string, exists bool) {
 	v := m.title
 	if v == nil {
 		return
@@ -175,10 +175,10 @@ func (m *ModelMutation) Title() (r string, exists bool) {
 	return *v, true
 }
 
-// OldTitle returns the old "title" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldTitle returns the old "title" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldTitle(ctx context.Context) (v string, err error) {
+func (m *ModelsMutation) OldTitle(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTitle is only allowed on UpdateOne operations")
 	}
@@ -193,17 +193,17 @@ func (m *ModelMutation) OldTitle(ctx context.Context) (v string, err error) {
 }
 
 // ResetTitle resets all changes to the "title" field.
-func (m *ModelMutation) ResetTitle() {
+func (m *ModelsMutation) ResetTitle() {
 	m.title = nil
 }
 
 // SetFax sets the "fax" field.
-func (m *ModelMutation) SetFax(s string) {
+func (m *ModelsMutation) SetFax(s string) {
 	m.fax = &s
 }
 
 // Fax returns the value of the "fax" field in the mutation.
-func (m *ModelMutation) Fax() (r string, exists bool) {
+func (m *ModelsMutation) Fax() (r string, exists bool) {
 	v := m.fax
 	if v == nil {
 		return
@@ -211,10 +211,10 @@ func (m *ModelMutation) Fax() (r string, exists bool) {
 	return *v, true
 }
 
-// OldFax returns the old "fax" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldFax returns the old "fax" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldFax(ctx context.Context) (v string, err error) {
+func (m *ModelsMutation) OldFax(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldFax is only allowed on UpdateOne operations")
 	}
@@ -229,17 +229,17 @@ func (m *ModelMutation) OldFax(ctx context.Context) (v string, err error) {
 }
 
 // ResetFax resets all changes to the "fax" field.
-func (m *ModelMutation) ResetFax() {
+func (m *ModelsMutation) ResetFax() {
 	m.fax = nil
 }
 
 // SetWeb sets the "web" field.
-func (m *ModelMutation) SetWeb(s string) {
+func (m *ModelsMutation) SetWeb(s string) {
 	m.web = &s
 }
 
 // Web returns the value of the "web" field in the mutation.
-func (m *ModelMutation) Web() (r string, exists bool) {
+func (m *ModelsMutation) Web() (r string, exists bool) {
 	v := m.web
 	if v == nil {
 		return
@@ -247,10 +247,10 @@ func (m *ModelMutation) Web() (r string, exists bool) {
 	return *v, true
 }
 
-// OldWeb returns the old "web" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldWeb returns the old "web" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldWeb(ctx context.Context) (v string, err error) {
+func (m *ModelsMutation) OldWeb(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldWeb is only allowed on UpdateOne operations")
 	}
@@ -265,18 +265,18 @@ func (m *ModelMutation) OldWeb(ctx context.Context) (v string, err error) {
 }
 
 // ResetWeb resets all changes to the "web" field.
-func (m *ModelMutation) ResetWeb() {
+func (m *ModelsMutation) ResetWeb() {
 	m.web = nil
 }
 
 // SetAge sets the "age" field.
-func (m *ModelMutation) SetAge(i int) {
+func (m *ModelsMutation) SetAge(i int) {
 	m.age = &i
 	m.addage = nil
 }
 
 // Age returns the value of the "age" field in the mutation.
-func (m *ModelMutation) Age() (r int, exists bool) {
+func (m *ModelsMutation) Age() (r int, exists bool) {
 	v := m.age
 	if v == nil {
 		return
@@ -284,10 +284,10 @@ func (m *ModelMutation) Age() (r int, exists bool) {
 	return *v, true
 }
 
-// OldAge returns the old "age" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldAge returns the old "age" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldAge(ctx context.Context) (v int, err error) {
+func (m *ModelsMutation) OldAge(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldAge is only allowed on UpdateOne operations")
 	}
@@ -302,7 +302,7 @@ func (m *ModelMutation) OldAge(ctx context.Context) (v int, err error) {
 }
 
 // AddAge adds i to the "age" field.
-func (m *ModelMutation) AddAge(i int) {
+func (m *ModelsMutation) AddAge(i int) {
 	if m.addage != nil {
 		*m.addage += i
 	} else {
@@ -311,7 +311,7 @@ func (m *ModelMutation) AddAge(i int) {
 }
 
 // AddedAge returns the value that was added to the "age" field in this mutation.
-func (m *ModelMutation) AddedAge() (r int, exists bool) {
+func (m *ModelsMutation) AddedAge() (r int, exists bool) {
 	v := m.addage
 	if v == nil {
 		return
@@ -320,18 +320,18 @@ func (m *ModelMutation) AddedAge() (r int, exists bool) {
 }
 
 // ResetAge resets all changes to the "age" field.
-func (m *ModelMutation) ResetAge() {
+func (m *ModelsMutation) ResetAge() {
 	m.age = nil
 	m.addage = nil
 }
 
 // SetRight sets the "right" field.
-func (m *ModelMutation) SetRight(b bool) {
+func (m *ModelsMutation) SetRight(b bool) {
 	m.right = &b
 }
 
 // Right returns the value of the "right" field in the mutation.
-func (m *ModelMutation) Right() (r bool, exists bool) {
+func (m *ModelsMutation) Right() (r bool, exists bool) {
 	v := m.right
 	if v == nil {
 		return
@@ -339,10 +339,10 @@ func (m *ModelMutation) Right() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldRight returns the old "right" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldRight returns the old "right" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldRight(ctx context.Context) (v bool, err error) {
+func (m *ModelsMutation) OldRight(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldRight is only allowed on UpdateOne operations")
 	}
@@ -357,18 +357,18 @@ func (m *ModelMutation) OldRight(ctx context.Context) (v bool, err error) {
 }
 
 // ResetRight resets all changes to the "right" field.
-func (m *ModelMutation) ResetRight() {
+func (m *ModelsMutation) ResetRight() {
 	m.right = nil
 }
 
 // SetCounter sets the "counter" field.
-func (m *ModelMutation) SetCounter(i int64) {
+func (m *ModelsMutation) SetCounter(i int64) {
 	m.counter = &i
 	m.addcounter = nil
 }
 
 // Counter returns the value of the "counter" field in the mutation.
-func (m *ModelMutation) Counter() (r int64, exists bool) {
+func (m *ModelsMutation) Counter() (r int64, exists bool) {
 	v := m.counter
 	if v == nil {
 		return
@@ -376,10 +376,10 @@ func (m *ModelMutation) Counter() (r int64, exists bool) {
 	return *v, true
 }
 
-// OldCounter returns the old "counter" field's value of the Model entity.
-// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// OldCounter returns the old "counter" field's value of the Models entity.
+// If the Models object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelMutation) OldCounter(ctx context.Context) (v int64, err error) {
+func (m *ModelsMutation) OldCounter(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCounter is only allowed on UpdateOne operations")
 	}
@@ -394,7 +394,7 @@ func (m *ModelMutation) OldCounter(ctx context.Context) (v int64, err error) {
 }
 
 // AddCounter adds i to the "counter" field.
-func (m *ModelMutation) AddCounter(i int64) {
+func (m *ModelsMutation) AddCounter(i int64) {
 	if m.addcounter != nil {
 		*m.addcounter += i
 	} else {
@@ -403,7 +403,7 @@ func (m *ModelMutation) AddCounter(i int64) {
 }
 
 // AddedCounter returns the value that was added to the "counter" field in this mutation.
-func (m *ModelMutation) AddedCounter() (r int64, exists bool) {
+func (m *ModelsMutation) AddedCounter() (r int64, exists bool) {
 	v := m.addcounter
 	if v == nil {
 		return
@@ -412,46 +412,46 @@ func (m *ModelMutation) AddedCounter() (r int64, exists bool) {
 }
 
 // ResetCounter resets all changes to the "counter" field.
-func (m *ModelMutation) ResetCounter() {
+func (m *ModelsMutation) ResetCounter() {
 	m.counter = nil
 	m.addcounter = nil
 }
 
 // Op returns the operation name.
-func (m *ModelMutation) Op() Op {
+func (m *ModelsMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (Model).
-func (m *ModelMutation) Type() string {
+// Type returns the node type of this mutation (Models).
+func (m *ModelsMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *ModelMutation) Fields() []string {
+func (m *ModelsMutation) Fields() []string {
 	fields := make([]string, 0, 7)
 	if m.name != nil {
-		fields = append(fields, model.FieldName)
+		fields = append(fields, models.FieldName)
 	}
 	if m.title != nil {
-		fields = append(fields, model.FieldTitle)
+		fields = append(fields, models.FieldTitle)
 	}
 	if m.fax != nil {
-		fields = append(fields, model.FieldFax)
+		fields = append(fields, models.FieldFax)
 	}
 	if m.web != nil {
-		fields = append(fields, model.FieldWeb)
+		fields = append(fields, models.FieldWeb)
 	}
 	if m.age != nil {
-		fields = append(fields, model.FieldAge)
+		fields = append(fields, models.FieldAge)
 	}
 	if m.right != nil {
-		fields = append(fields, model.FieldRight)
+		fields = append(fields, models.FieldRight)
 	}
 	if m.counter != nil {
-		fields = append(fields, model.FieldCounter)
+		fields = append(fields, models.FieldCounter)
 	}
 	return fields
 }
@@ -459,21 +459,21 @@ func (m *ModelMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *ModelMutation) Field(name string) (ent.Value, bool) {
+func (m *ModelsMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case model.FieldName:
+	case models.FieldName:
 		return m.Name()
-	case model.FieldTitle:
+	case models.FieldTitle:
 		return m.Title()
-	case model.FieldFax:
+	case models.FieldFax:
 		return m.Fax()
-	case model.FieldWeb:
+	case models.FieldWeb:
 		return m.Web()
-	case model.FieldAge:
+	case models.FieldAge:
 		return m.Age()
-	case model.FieldRight:
+	case models.FieldRight:
 		return m.Right()
-	case model.FieldCounter:
+	case models.FieldCounter:
 		return m.Counter()
 	}
 	return nil, false
@@ -482,74 +482,74 @@ func (m *ModelMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *ModelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *ModelsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case model.FieldName:
+	case models.FieldName:
 		return m.OldName(ctx)
-	case model.FieldTitle:
+	case models.FieldTitle:
 		return m.OldTitle(ctx)
-	case model.FieldFax:
+	case models.FieldFax:
 		return m.OldFax(ctx)
-	case model.FieldWeb:
+	case models.FieldWeb:
 		return m.OldWeb(ctx)
-	case model.FieldAge:
+	case models.FieldAge:
 		return m.OldAge(ctx)
-	case model.FieldRight:
+	case models.FieldRight:
 		return m.OldRight(ctx)
-	case model.FieldCounter:
+	case models.FieldCounter:
 		return m.OldCounter(ctx)
 	}
-	return nil, fmt.Errorf("unknown Model field %s", name)
+	return nil, fmt.Errorf("unknown Models field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *ModelMutation) SetField(name string, value ent.Value) error {
+func (m *ModelsMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case model.FieldName:
+	case models.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
 		return nil
-	case model.FieldTitle:
+	case models.FieldTitle:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTitle(v)
 		return nil
-	case model.FieldFax:
+	case models.FieldFax:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFax(v)
 		return nil
-	case model.FieldWeb:
+	case models.FieldWeb:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWeb(v)
 		return nil
-	case model.FieldAge:
+	case models.FieldAge:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAge(v)
 		return nil
-	case model.FieldRight:
+	case models.FieldRight:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRight(v)
 		return nil
-	case model.FieldCounter:
+	case models.FieldCounter:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -557,18 +557,18 @@ func (m *ModelMutation) SetField(name string, value ent.Value) error {
 		m.SetCounter(v)
 		return nil
 	}
-	return fmt.Errorf("unknown Model field %s", name)
+	return fmt.Errorf("unknown Models field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *ModelMutation) AddedFields() []string {
+func (m *ModelsMutation) AddedFields() []string {
 	var fields []string
 	if m.addage != nil {
-		fields = append(fields, model.FieldAge)
+		fields = append(fields, models.FieldAge)
 	}
 	if m.addcounter != nil {
-		fields = append(fields, model.FieldCounter)
+		fields = append(fields, models.FieldCounter)
 	}
 	return fields
 }
@@ -576,11 +576,11 @@ func (m *ModelMutation) AddedFields() []string {
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *ModelMutation) AddedField(name string) (ent.Value, bool) {
+func (m *ModelsMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case model.FieldAge:
+	case models.FieldAge:
 		return m.AddedAge()
-	case model.FieldCounter:
+	case models.FieldCounter:
 		return m.AddedCounter()
 	}
 	return nil, false
@@ -589,16 +589,16 @@ func (m *ModelMutation) AddedField(name string) (ent.Value, bool) {
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *ModelMutation) AddField(name string, value ent.Value) error {
+func (m *ModelsMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case model.FieldAge:
+	case models.FieldAge:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAge(v)
 		return nil
-	case model.FieldCounter:
+	case models.FieldCounter:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -606,101 +606,101 @@ func (m *ModelMutation) AddField(name string, value ent.Value) error {
 		m.AddCounter(v)
 		return nil
 	}
-	return fmt.Errorf("unknown Model numeric field %s", name)
+	return fmt.Errorf("unknown Models numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *ModelMutation) ClearedFields() []string {
+func (m *ModelsMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *ModelMutation) FieldCleared(name string) bool {
+func (m *ModelsMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *ModelMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown Model nullable field %s", name)
+func (m *ModelsMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Models nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *ModelMutation) ResetField(name string) error {
+func (m *ModelsMutation) ResetField(name string) error {
 	switch name {
-	case model.FieldName:
+	case models.FieldName:
 		m.ResetName()
 		return nil
-	case model.FieldTitle:
+	case models.FieldTitle:
 		m.ResetTitle()
 		return nil
-	case model.FieldFax:
+	case models.FieldFax:
 		m.ResetFax()
 		return nil
-	case model.FieldWeb:
+	case models.FieldWeb:
 		m.ResetWeb()
 		return nil
-	case model.FieldAge:
+	case models.FieldAge:
 		m.ResetAge()
 		return nil
-	case model.FieldRight:
+	case models.FieldRight:
 		m.ResetRight()
 		return nil
-	case model.FieldCounter:
+	case models.FieldCounter:
 		m.ResetCounter()
 		return nil
 	}
-	return fmt.Errorf("unknown Model field %s", name)
+	return fmt.Errorf("unknown Models field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *ModelMutation) AddedEdges() []string {
+func (m *ModelsMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *ModelMutation) AddedIDs(name string) []ent.Value {
+func (m *ModelsMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *ModelMutation) RemovedEdges() []string {
+func (m *ModelsMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *ModelMutation) RemovedIDs(name string) []ent.Value {
+func (m *ModelsMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *ModelMutation) ClearedEdges() []string {
+func (m *ModelsMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *ModelMutation) EdgeCleared(name string) bool {
+func (m *ModelsMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *ModelMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown Model unique edge %s", name)
+func (m *ModelsMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Models unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *ModelMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown Model edge %s", name)
+func (m *ModelsMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Models edge %s", name)
 }

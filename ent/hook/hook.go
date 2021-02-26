@@ -9,15 +9,15 @@ import (
 	"github.com/Kourin1996/orm-benchmark/ent"
 )
 
-// The ModelFunc type is an adapter to allow the use of ordinary
-// function as Model mutator.
-type ModelFunc func(context.Context, *ent.ModelMutation) (ent.Value, error)
+// The ModelsFunc type is an adapter to allow the use of ordinary
+// function as Models mutator.
+type ModelsFunc func(context.Context, *ent.ModelsMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ModelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ModelMutation)
+func (f ModelsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ModelsMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ModelMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ModelsMutation", m)
 	}
 	return f(ctx, mv)
 }

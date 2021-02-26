@@ -9,7 +9,7 @@ import (
 
 	"github.com/Kourin1996/orm-benchmark/ent/migrate"
 
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -20,8 +20,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Model is the client for interacting with the Model builders.
-	Model *ModelClient
+	// Models is the client for interacting with the Models builders.
+	Models *ModelsClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -35,7 +35,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Model = NewModelClient(c.config)
+	c.Models = NewModelsClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -69,7 +69,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:    ctx,
 		config: cfg,
-		Model:  NewModelClient(cfg),
+		Models: NewModelsClient(cfg),
 	}, nil
 }
 
@@ -88,14 +88,14 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
 		config: cfg,
-		Model:  NewModelClient(cfg),
+		Models: NewModelsClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Model.
+//		Models.
 //		Query().
 //		Count(ctx)
 //
@@ -118,85 +118,85 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Model.Use(hooks...)
+	c.Models.Use(hooks...)
 }
 
-// ModelClient is a client for the Model schema.
-type ModelClient struct {
+// ModelsClient is a client for the Models schema.
+type ModelsClient struct {
 	config
 }
 
-// NewModelClient returns a client for the Model from the given config.
-func NewModelClient(c config) *ModelClient {
-	return &ModelClient{config: c}
+// NewModelsClient returns a client for the Models from the given config.
+func NewModelsClient(c config) *ModelsClient {
+	return &ModelsClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `model.Hooks(f(g(h())))`.
-func (c *ModelClient) Use(hooks ...Hook) {
-	c.hooks.Model = append(c.hooks.Model, hooks...)
+// A call to `Use(f, g, h)` equals to `models.Hooks(f(g(h())))`.
+func (c *ModelsClient) Use(hooks ...Hook) {
+	c.hooks.Models = append(c.hooks.Models, hooks...)
 }
 
-// Create returns a create builder for Model.
-func (c *ModelClient) Create() *ModelCreate {
-	mutation := newModelMutation(c.config, OpCreate)
-	return &ModelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a create builder for Models.
+func (c *ModelsClient) Create() *ModelsCreate {
+	mutation := newModelsMutation(c.config, OpCreate)
+	return &ModelsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Model entities.
-func (c *ModelClient) CreateBulk(builders ...*ModelCreate) *ModelCreateBulk {
-	return &ModelCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Models entities.
+func (c *ModelsClient) CreateBulk(builders ...*ModelsCreate) *ModelsCreateBulk {
+	return &ModelsCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Model.
-func (c *ModelClient) Update() *ModelUpdate {
-	mutation := newModelMutation(c.config, OpUpdate)
-	return &ModelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Models.
+func (c *ModelsClient) Update() *ModelsUpdate {
+	mutation := newModelsMutation(c.config, OpUpdate)
+	return &ModelsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ModelClient) UpdateOne(m *Model) *ModelUpdateOne {
-	mutation := newModelMutation(c.config, OpUpdateOne, withModel(m))
-	return &ModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ModelsClient) UpdateOne(m *Models) *ModelsUpdateOne {
+	mutation := newModelsMutation(c.config, OpUpdateOne, withModels(m))
+	return &ModelsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ModelClient) UpdateOneID(id int) *ModelUpdateOne {
-	mutation := newModelMutation(c.config, OpUpdateOne, withModelID(id))
-	return &ModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ModelsClient) UpdateOneID(id int) *ModelsUpdateOne {
+	mutation := newModelsMutation(c.config, OpUpdateOne, withModelsID(id))
+	return &ModelsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Model.
-func (c *ModelClient) Delete() *ModelDelete {
-	mutation := newModelMutation(c.config, OpDelete)
-	return &ModelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Models.
+func (c *ModelsClient) Delete() *ModelsDelete {
+	mutation := newModelsMutation(c.config, OpDelete)
+	return &ModelsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *ModelClient) DeleteOne(m *Model) *ModelDeleteOne {
+func (c *ModelsClient) DeleteOne(m *Models) *ModelsDeleteOne {
 	return c.DeleteOneID(m.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *ModelClient) DeleteOneID(id int) *ModelDeleteOne {
-	builder := c.Delete().Where(model.ID(id))
+func (c *ModelsClient) DeleteOneID(id int) *ModelsDeleteOne {
+	builder := c.Delete().Where(models.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ModelDeleteOne{builder}
+	return &ModelsDeleteOne{builder}
 }
 
-// Query returns a query builder for Model.
-func (c *ModelClient) Query() *ModelQuery {
-	return &ModelQuery{config: c.config}
+// Query returns a query builder for Models.
+func (c *ModelsClient) Query() *ModelsQuery {
+	return &ModelsQuery{config: c.config}
 }
 
-// Get returns a Model entity by its id.
-func (c *ModelClient) Get(ctx context.Context, id int) (*Model, error) {
-	return c.Query().Where(model.ID(id)).Only(ctx)
+// Get returns a Models entity by its id.
+func (c *ModelsClient) Get(ctx context.Context, id int) (*Models, error) {
+	return c.Query().Where(models.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ModelClient) GetX(ctx context.Context, id int) *Model {
+func (c *ModelsClient) GetX(ctx context.Context, id int) *Models {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -205,6 +205,6 @@ func (c *ModelClient) GetX(ctx context.Context, id int) *Model {
 }
 
 // Hooks returns the client hooks.
-func (c *ModelClient) Hooks() []Hook {
-	return c.hooks.Model
+func (c *ModelsClient) Hooks() []Hook {
+	return c.hooks.Models
 }

@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 )
 
-// Model is the model entity for the Model schema.
-type Model struct {
+// Models is the model entity for the Models schema.
+type Models struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -32,74 +32,74 @@ type Model struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Model) scanValues(columns []string) ([]interface{}, error) {
+func (*Models) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case model.FieldRight:
+		case models.FieldRight:
 			values[i] = &sql.NullBool{}
-		case model.FieldID, model.FieldAge, model.FieldCounter:
+		case models.FieldID, models.FieldAge, models.FieldCounter:
 			values[i] = &sql.NullInt64{}
-		case model.FieldName, model.FieldTitle, model.FieldFax, model.FieldWeb:
+		case models.FieldName, models.FieldTitle, models.FieldFax, models.FieldWeb:
 			values[i] = &sql.NullString{}
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type Model", columns[i])
+			return nil, fmt.Errorf("unexpected column %q for type Models", columns[i])
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Model fields.
-func (m *Model) assignValues(columns []string, values []interface{}) error {
+// to the Models fields.
+func (m *Models) assignValues(columns []string, values []interface{}) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case model.FieldID:
+		case models.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			m.ID = int(value.Int64)
-		case model.FieldName:
+		case models.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				m.Name = value.String
 			}
-		case model.FieldTitle:
+		case models.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
 				m.Title = value.String
 			}
-		case model.FieldFax:
+		case models.FieldFax:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field fax", values[i])
 			} else if value.Valid {
 				m.Fax = value.String
 			}
-		case model.FieldWeb:
+		case models.FieldWeb:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field web", values[i])
 			} else if value.Valid {
 				m.Web = value.String
 			}
-		case model.FieldAge:
+		case models.FieldAge:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field age", values[i])
 			} else if value.Valid {
 				m.Age = int(value.Int64)
 			}
-		case model.FieldRight:
+		case models.FieldRight:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field right", values[i])
 			} else if value.Valid {
 				m.Right = value.Bool
 			}
-		case model.FieldCounter:
+		case models.FieldCounter:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field counter", values[i])
 			} else if value.Valid {
@@ -110,28 +110,28 @@ func (m *Model) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
-// Update returns a builder for updating this Model.
-// Note that you need to call Model.Unwrap() before calling this method if this Model
+// Update returns a builder for updating this Models.
+// Note that you need to call Models.Unwrap() before calling this method if this Models
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (m *Model) Update() *ModelUpdateOne {
-	return (&ModelClient{config: m.config}).UpdateOne(m)
+func (m *Models) Update() *ModelsUpdateOne {
+	return (&ModelsClient{config: m.config}).UpdateOne(m)
 }
 
-// Unwrap unwraps the Model entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Models entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (m *Model) Unwrap() *Model {
+func (m *Models) Unwrap() *Models {
 	tx, ok := m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Model is not a transactional entity")
+		panic("ent: Models is not a transactional entity")
 	}
 	m.config.driver = tx.drv
 	return m
 }
 
 // String implements the fmt.Stringer.
-func (m *Model) String() string {
+func (m *Models) String() string {
 	var builder strings.Builder
-	builder.WriteString("Model(")
+	builder.WriteString("Models(")
 	builder.WriteString(fmt.Sprintf("id=%v", m.ID))
 	builder.WriteString(", name=")
 	builder.WriteString(m.Name)
@@ -151,10 +151,10 @@ func (m *Model) String() string {
 	return builder.String()
 }
 
-// Models is a parsable slice of Model.
-type Models []*Model
+// ModelsSlice is a parsable slice of Models.
+type ModelsSlice []*Models
 
-func (m Models) config(cfg config) {
+func (m ModelsSlice) config(cfg config) {
 	for _i := range m {
 		m[_i].config = cfg
 	}

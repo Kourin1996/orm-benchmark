@@ -6,5 +6,5 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Model is the predicate function for model builders.
-type Model func(*sql.Selector)
+// Models is the predicate function for models builders.
+type Models func(*sql.Selector)

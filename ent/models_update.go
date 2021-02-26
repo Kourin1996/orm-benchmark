@@ -9,86 +9,86 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 	"github.com/Kourin1996/orm-benchmark/ent/predicate"
 )
 
-// ModelUpdate is the builder for updating Model entities.
-type ModelUpdate struct {
+// ModelsUpdate is the builder for updating Models entities.
+type ModelsUpdate struct {
 	config
 	hooks    []Hook
-	mutation *ModelMutation
+	mutation *ModelsMutation
 }
 
-// Where adds a new predicate for the ModelUpdate builder.
-func (mu *ModelUpdate) Where(ps ...predicate.Model) *ModelUpdate {
+// Where adds a new predicate for the ModelsUpdate builder.
+func (mu *ModelsUpdate) Where(ps ...predicate.Models) *ModelsUpdate {
 	mu.mutation.predicates = append(mu.mutation.predicates, ps...)
 	return mu
 }
 
 // SetName sets the "name" field.
-func (mu *ModelUpdate) SetName(s string) *ModelUpdate {
+func (mu *ModelsUpdate) SetName(s string) *ModelsUpdate {
 	mu.mutation.SetName(s)
 	return mu
 }
 
 // SetTitle sets the "title" field.
-func (mu *ModelUpdate) SetTitle(s string) *ModelUpdate {
+func (mu *ModelsUpdate) SetTitle(s string) *ModelsUpdate {
 	mu.mutation.SetTitle(s)
 	return mu
 }
 
 // SetFax sets the "fax" field.
-func (mu *ModelUpdate) SetFax(s string) *ModelUpdate {
+func (mu *ModelsUpdate) SetFax(s string) *ModelsUpdate {
 	mu.mutation.SetFax(s)
 	return mu
 }
 
 // SetWeb sets the "web" field.
-func (mu *ModelUpdate) SetWeb(s string) *ModelUpdate {
+func (mu *ModelsUpdate) SetWeb(s string) *ModelsUpdate {
 	mu.mutation.SetWeb(s)
 	return mu
 }
 
 // SetAge sets the "age" field.
-func (mu *ModelUpdate) SetAge(i int) *ModelUpdate {
+func (mu *ModelsUpdate) SetAge(i int) *ModelsUpdate {
 	mu.mutation.ResetAge()
 	mu.mutation.SetAge(i)
 	return mu
 }
 
 // AddAge adds i to the "age" field.
-func (mu *ModelUpdate) AddAge(i int) *ModelUpdate {
+func (mu *ModelsUpdate) AddAge(i int) *ModelsUpdate {
 	mu.mutation.AddAge(i)
 	return mu
 }
 
 // SetRight sets the "right" field.
-func (mu *ModelUpdate) SetRight(b bool) *ModelUpdate {
+func (mu *ModelsUpdate) SetRight(b bool) *ModelsUpdate {
 	mu.mutation.SetRight(b)
 	return mu
 }
 
 // SetCounter sets the "counter" field.
-func (mu *ModelUpdate) SetCounter(i int64) *ModelUpdate {
+func (mu *ModelsUpdate) SetCounter(i int64) *ModelsUpdate {
 	mu.mutation.ResetCounter()
 	mu.mutation.SetCounter(i)
 	return mu
 }
 
 // AddCounter adds i to the "counter" field.
-func (mu *ModelUpdate) AddCounter(i int64) *ModelUpdate {
+func (mu *ModelsUpdate) AddCounter(i int64) *ModelsUpdate {
 	mu.mutation.AddCounter(i)
 	return mu
 }
 
-// Mutation returns the ModelMutation object of the builder.
-func (mu *ModelUpdate) Mutation() *ModelMutation {
+// Mutation returns the ModelsMutation object of the builder.
+func (mu *ModelsUpdate) Mutation() *ModelsMutation {
 	return mu.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (mu *ModelUpdate) Save(ctx context.Context) (int, error) {
+func (mu *ModelsUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -100,7 +100,7 @@ func (mu *ModelUpdate) Save(ctx context.Context) (int, error) {
 		affected, err = mu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ModelMutation)
+			mutation, ok := m.(*ModelsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -123,7 +123,7 @@ func (mu *ModelUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (mu *ModelUpdate) SaveX(ctx context.Context) int {
+func (mu *ModelsUpdate) SaveX(ctx context.Context) int {
 	affected, err := mu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -132,51 +132,51 @@ func (mu *ModelUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (mu *ModelUpdate) Exec(ctx context.Context) error {
+func (mu *ModelsUpdate) Exec(ctx context.Context) error {
 	_, err := mu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (mu *ModelUpdate) ExecX(ctx context.Context) {
+func (mu *ModelsUpdate) ExecX(ctx context.Context) {
 	if err := mu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (mu *ModelUpdate) check() error {
+func (mu *ModelsUpdate) check() error {
 	if v, ok := mu.mutation.Name(); ok {
-		if err := model.NameValidator(v); err != nil {
+		if err := models.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	if v, ok := mu.mutation.Title(); ok {
-		if err := model.TitleValidator(v); err != nil {
+		if err := models.TitleValidator(v); err != nil {
 			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
 		}
 	}
 	if v, ok := mu.mutation.Fax(); ok {
-		if err := model.FaxValidator(v); err != nil {
+		if err := models.FaxValidator(v); err != nil {
 			return &ValidationError{Name: "fax", err: fmt.Errorf("ent: validator failed for field \"fax\": %w", err)}
 		}
 	}
 	if v, ok := mu.mutation.Web(); ok {
-		if err := model.WebValidator(v); err != nil {
+		if err := models.WebValidator(v); err != nil {
 			return &ValidationError{Name: "web", err: fmt.Errorf("ent: validator failed for field \"web\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (mu *ModelsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   model.Table,
-			Columns: model.Columns,
+			Table:   models.Table,
+			Columns: models.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: model.FieldID,
+				Column: models.FieldID,
 			},
 		},
 	}
@@ -191,68 +191,68 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldName,
+			Column: models.FieldName,
 		})
 	}
 	if value, ok := mu.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldTitle,
+			Column: models.FieldTitle,
 		})
 	}
 	if value, ok := mu.mutation.Fax(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldFax,
+			Column: models.FieldFax,
 		})
 	}
 	if value, ok := mu.mutation.Web(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldWeb,
+			Column: models.FieldWeb,
 		})
 	}
 	if value, ok := mu.mutation.Age(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: model.FieldAge,
+			Column: models.FieldAge,
 		})
 	}
 	if value, ok := mu.mutation.AddedAge(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: model.FieldAge,
+			Column: models.FieldAge,
 		})
 	}
 	if value, ok := mu.mutation.Right(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: model.FieldRight,
+			Column: models.FieldRight,
 		})
 	}
 	if value, ok := mu.mutation.Counter(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt64,
 			Value:  value,
-			Column: model.FieldCounter,
+			Column: models.FieldCounter,
 		})
 	}
 	if value, ok := mu.mutation.AddedCounter(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt64,
 			Value:  value,
-			Column: model.FieldCounter,
+			Column: models.FieldCounter,
 		})
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{model.Label}
+			err = &NotFoundError{models.Label}
 		} else if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
 		}
@@ -261,79 +261,79 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	return n, nil
 }
 
-// ModelUpdateOne is the builder for updating a single Model entity.
-type ModelUpdateOne struct {
+// ModelsUpdateOne is the builder for updating a single Models entity.
+type ModelsUpdateOne struct {
 	config
 	hooks    []Hook
-	mutation *ModelMutation
+	mutation *ModelsMutation
 }
 
 // SetName sets the "name" field.
-func (muo *ModelUpdateOne) SetName(s string) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetName(s string) *ModelsUpdateOne {
 	muo.mutation.SetName(s)
 	return muo
 }
 
 // SetTitle sets the "title" field.
-func (muo *ModelUpdateOne) SetTitle(s string) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetTitle(s string) *ModelsUpdateOne {
 	muo.mutation.SetTitle(s)
 	return muo
 }
 
 // SetFax sets the "fax" field.
-func (muo *ModelUpdateOne) SetFax(s string) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetFax(s string) *ModelsUpdateOne {
 	muo.mutation.SetFax(s)
 	return muo
 }
 
 // SetWeb sets the "web" field.
-func (muo *ModelUpdateOne) SetWeb(s string) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetWeb(s string) *ModelsUpdateOne {
 	muo.mutation.SetWeb(s)
 	return muo
 }
 
 // SetAge sets the "age" field.
-func (muo *ModelUpdateOne) SetAge(i int) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetAge(i int) *ModelsUpdateOne {
 	muo.mutation.ResetAge()
 	muo.mutation.SetAge(i)
 	return muo
 }
 
 // AddAge adds i to the "age" field.
-func (muo *ModelUpdateOne) AddAge(i int) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) AddAge(i int) *ModelsUpdateOne {
 	muo.mutation.AddAge(i)
 	return muo
 }
 
 // SetRight sets the "right" field.
-func (muo *ModelUpdateOne) SetRight(b bool) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetRight(b bool) *ModelsUpdateOne {
 	muo.mutation.SetRight(b)
 	return muo
 }
 
 // SetCounter sets the "counter" field.
-func (muo *ModelUpdateOne) SetCounter(i int64) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) SetCounter(i int64) *ModelsUpdateOne {
 	muo.mutation.ResetCounter()
 	muo.mutation.SetCounter(i)
 	return muo
 }
 
 // AddCounter adds i to the "counter" field.
-func (muo *ModelUpdateOne) AddCounter(i int64) *ModelUpdateOne {
+func (muo *ModelsUpdateOne) AddCounter(i int64) *ModelsUpdateOne {
 	muo.mutation.AddCounter(i)
 	return muo
 }
 
-// Mutation returns the ModelMutation object of the builder.
-func (muo *ModelUpdateOne) Mutation() *ModelMutation {
+// Mutation returns the ModelsMutation object of the builder.
+func (muo *ModelsUpdateOne) Mutation() *ModelsMutation {
 	return muo.mutation
 }
 
-// Save executes the query and returns the updated Model entity.
-func (muo *ModelUpdateOne) Save(ctx context.Context) (*Model, error) {
+// Save executes the query and returns the updated Models entity.
+func (muo *ModelsUpdateOne) Save(ctx context.Context) (*Models, error) {
 	var (
 		err  error
-		node *Model
+		node *Models
 	)
 	if len(muo.hooks) == 0 {
 		if err = muo.check(); err != nil {
@@ -342,7 +342,7 @@ func (muo *ModelUpdateOne) Save(ctx context.Context) (*Model, error) {
 		node, err = muo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ModelMutation)
+			mutation, ok := m.(*ModelsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -365,7 +365,7 @@ func (muo *ModelUpdateOne) Save(ctx context.Context) (*Model, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (muo *ModelUpdateOne) SaveX(ctx context.Context) *Model {
+func (muo *ModelsUpdateOne) SaveX(ctx context.Context) *Models {
 	node, err := muo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -374,57 +374,57 @@ func (muo *ModelUpdateOne) SaveX(ctx context.Context) *Model {
 }
 
 // Exec executes the query on the entity.
-func (muo *ModelUpdateOne) Exec(ctx context.Context) error {
+func (muo *ModelsUpdateOne) Exec(ctx context.Context) error {
 	_, err := muo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (muo *ModelUpdateOne) ExecX(ctx context.Context) {
+func (muo *ModelsUpdateOne) ExecX(ctx context.Context) {
 	if err := muo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (muo *ModelUpdateOne) check() error {
+func (muo *ModelsUpdateOne) check() error {
 	if v, ok := muo.mutation.Name(); ok {
-		if err := model.NameValidator(v); err != nil {
+		if err := models.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	if v, ok := muo.mutation.Title(); ok {
-		if err := model.TitleValidator(v); err != nil {
+		if err := models.TitleValidator(v); err != nil {
 			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
 		}
 	}
 	if v, ok := muo.mutation.Fax(); ok {
-		if err := model.FaxValidator(v); err != nil {
+		if err := models.FaxValidator(v); err != nil {
 			return &ValidationError{Name: "fax", err: fmt.Errorf("ent: validator failed for field \"fax\": %w", err)}
 		}
 	}
 	if v, ok := muo.mutation.Web(); ok {
-		if err := model.WebValidator(v); err != nil {
+		if err := models.WebValidator(v); err != nil {
 			return &ValidationError{Name: "web", err: fmt.Errorf("ent: validator failed for field \"web\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error) {
+func (muo *ModelsUpdateOne) sqlSave(ctx context.Context) (_node *Models, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   model.Table,
-			Columns: model.Columns,
+			Table:   models.Table,
+			Columns: models.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: model.FieldID,
+				Column: models.FieldID,
 			},
 		},
 	}
 	id, ok := muo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Model.ID for update")}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Models.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if ps := muo.mutation.predicates; len(ps) > 0 {
@@ -438,71 +438,71 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldName,
+			Column: models.FieldName,
 		})
 	}
 	if value, ok := muo.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldTitle,
+			Column: models.FieldTitle,
 		})
 	}
 	if value, ok := muo.mutation.Fax(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldFax,
+			Column: models.FieldFax,
 		})
 	}
 	if value, ok := muo.mutation.Web(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldWeb,
+			Column: models.FieldWeb,
 		})
 	}
 	if value, ok := muo.mutation.Age(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: model.FieldAge,
+			Column: models.FieldAge,
 		})
 	}
 	if value, ok := muo.mutation.AddedAge(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: model.FieldAge,
+			Column: models.FieldAge,
 		})
 	}
 	if value, ok := muo.mutation.Right(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: model.FieldRight,
+			Column: models.FieldRight,
 		})
 	}
 	if value, ok := muo.mutation.Counter(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt64,
 			Value:  value,
-			Column: model.FieldCounter,
+			Column: models.FieldCounter,
 		})
 	}
 	if value, ok := muo.mutation.AddedCounter(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt64,
 			Value:  value,
-			Column: model.FieldCounter,
+			Column: models.FieldCounter,
 		})
 	}
-	_node = &Model{config: muo.config}
+	_node = &Models{config: muo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, muo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{model.Label}
+			err = &NotFoundError{models.Label}
 		} else if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
 		}

@@ -9,68 +9,68 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/Kourin1996/orm-benchmark/ent/model"
+	"github.com/Kourin1996/orm-benchmark/ent/models"
 )
 
-// ModelCreate is the builder for creating a Model entity.
-type ModelCreate struct {
+// ModelsCreate is the builder for creating a Models entity.
+type ModelsCreate struct {
 	config
-	mutation *ModelMutation
+	mutation *ModelsMutation
 	hooks    []Hook
 }
 
 // SetName sets the "name" field.
-func (mc *ModelCreate) SetName(s string) *ModelCreate {
+func (mc *ModelsCreate) SetName(s string) *ModelsCreate {
 	mc.mutation.SetName(s)
 	return mc
 }
 
 // SetTitle sets the "title" field.
-func (mc *ModelCreate) SetTitle(s string) *ModelCreate {
+func (mc *ModelsCreate) SetTitle(s string) *ModelsCreate {
 	mc.mutation.SetTitle(s)
 	return mc
 }
 
 // SetFax sets the "fax" field.
-func (mc *ModelCreate) SetFax(s string) *ModelCreate {
+func (mc *ModelsCreate) SetFax(s string) *ModelsCreate {
 	mc.mutation.SetFax(s)
 	return mc
 }
 
 // SetWeb sets the "web" field.
-func (mc *ModelCreate) SetWeb(s string) *ModelCreate {
+func (mc *ModelsCreate) SetWeb(s string) *ModelsCreate {
 	mc.mutation.SetWeb(s)
 	return mc
 }
 
 // SetAge sets the "age" field.
-func (mc *ModelCreate) SetAge(i int) *ModelCreate {
+func (mc *ModelsCreate) SetAge(i int) *ModelsCreate {
 	mc.mutation.SetAge(i)
 	return mc
 }
 
 // SetRight sets the "right" field.
-func (mc *ModelCreate) SetRight(b bool) *ModelCreate {
+func (mc *ModelsCreate) SetRight(b bool) *ModelsCreate {
 	mc.mutation.SetRight(b)
 	return mc
 }
 
 // SetCounter sets the "counter" field.
-func (mc *ModelCreate) SetCounter(i int64) *ModelCreate {
+func (mc *ModelsCreate) SetCounter(i int64) *ModelsCreate {
 	mc.mutation.SetCounter(i)
 	return mc
 }
 
-// Mutation returns the ModelMutation object of the builder.
-func (mc *ModelCreate) Mutation() *ModelMutation {
+// Mutation returns the ModelsMutation object of the builder.
+func (mc *ModelsCreate) Mutation() *ModelsMutation {
 	return mc.mutation
 }
 
-// Save creates the Model in the database.
-func (mc *ModelCreate) Save(ctx context.Context) (*Model, error) {
+// Save creates the Models in the database.
+func (mc *ModelsCreate) Save(ctx context.Context) (*Models, error) {
 	var (
 		err  error
-		node *Model
+		node *Models
 	)
 	if len(mc.hooks) == 0 {
 		if err = mc.check(); err != nil {
@@ -79,7 +79,7 @@ func (mc *ModelCreate) Save(ctx context.Context) (*Model, error) {
 		node, err = mc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ModelMutation)
+			mutation, ok := m.(*ModelsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -102,7 +102,7 @@ func (mc *ModelCreate) Save(ctx context.Context) (*Model, error) {
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (mc *ModelCreate) SaveX(ctx context.Context) *Model {
+func (mc *ModelsCreate) SaveX(ctx context.Context) *Models {
 	v, err := mc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -111,12 +111,12 @@ func (mc *ModelCreate) SaveX(ctx context.Context) *Model {
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (mc *ModelCreate) check() error {
+func (mc *ModelsCreate) check() error {
 	if _, ok := mc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
 	if v, ok := mc.mutation.Name(); ok {
-		if err := model.NameValidator(v); err != nil {
+		if err := models.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
@@ -124,7 +124,7 @@ func (mc *ModelCreate) check() error {
 		return &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
 	}
 	if v, ok := mc.mutation.Title(); ok {
-		if err := model.TitleValidator(v); err != nil {
+		if err := models.TitleValidator(v); err != nil {
 			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
 		}
 	}
@@ -132,7 +132,7 @@ func (mc *ModelCreate) check() error {
 		return &ValidationError{Name: "fax", err: errors.New("ent: missing required field \"fax\"")}
 	}
 	if v, ok := mc.mutation.Fax(); ok {
-		if err := model.FaxValidator(v); err != nil {
+		if err := models.FaxValidator(v); err != nil {
 			return &ValidationError{Name: "fax", err: fmt.Errorf("ent: validator failed for field \"fax\": %w", err)}
 		}
 	}
@@ -140,7 +140,7 @@ func (mc *ModelCreate) check() error {
 		return &ValidationError{Name: "web", err: errors.New("ent: missing required field \"web\"")}
 	}
 	if v, ok := mc.mutation.Web(); ok {
-		if err := model.WebValidator(v); err != nil {
+		if err := models.WebValidator(v); err != nil {
 			return &ValidationError{Name: "web", err: fmt.Errorf("ent: validator failed for field \"web\": %w", err)}
 		}
 	}
@@ -156,7 +156,7 @@ func (mc *ModelCreate) check() error {
 	return nil
 }
 
-func (mc *ModelCreate) sqlSave(ctx context.Context) (*Model, error) {
+func (mc *ModelsCreate) sqlSave(ctx context.Context) (*Models, error) {
 	_node, _spec := mc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, mc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
@@ -169,14 +169,14 @@ func (mc *ModelCreate) sqlSave(ctx context.Context) (*Model, error) {
 	return _node, nil
 }
 
-func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
+func (mc *ModelsCreate) createSpec() (*Models, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Model{config: mc.config}
+		_node = &Models{config: mc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: model.Table,
+			Table: models.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: model.FieldID,
+				Column: models.FieldID,
 			},
 		}
 	)
@@ -184,7 +184,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldName,
+			Column: models.FieldName,
 		})
 		_node.Name = value
 	}
@@ -192,7 +192,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldTitle,
+			Column: models.FieldTitle,
 		})
 		_node.Title = value
 	}
@@ -200,7 +200,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldFax,
+			Column: models.FieldFax,
 		})
 		_node.Fax = value
 	}
@@ -208,7 +208,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: model.FieldWeb,
+			Column: models.FieldWeb,
 		})
 		_node.Web = value
 	}
@@ -216,7 +216,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: model.FieldAge,
+			Column: models.FieldAge,
 		})
 		_node.Age = value
 	}
@@ -224,7 +224,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: model.FieldRight,
+			Column: models.FieldRight,
 		})
 		_node.Right = value
 	}
@@ -232,29 +232,29 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt64,
 			Value:  value,
-			Column: model.FieldCounter,
+			Column: models.FieldCounter,
 		})
 		_node.Counter = value
 	}
 	return _node, _spec
 }
 
-// ModelCreateBulk is the builder for creating many Model entities in bulk.
-type ModelCreateBulk struct {
+// ModelsCreateBulk is the builder for creating many Models entities in bulk.
+type ModelsCreateBulk struct {
 	config
-	builders []*ModelCreate
+	builders []*ModelsCreate
 }
 
-// Save creates the Model entities in the database.
-func (mcb *ModelCreateBulk) Save(ctx context.Context) ([]*Model, error) {
+// Save creates the Models entities in the database.
+func (mcb *ModelsCreateBulk) Save(ctx context.Context) ([]*Models, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(mcb.builders))
-	nodes := make([]*Model, len(mcb.builders))
+	nodes := make([]*Models, len(mcb.builders))
 	mutators := make([]Mutator, len(mcb.builders))
 	for i := range mcb.builders {
 		func(i int, root context.Context) {
 			builder := mcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*ModelMutation)
+				mutation, ok := m.(*ModelsMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -297,7 +297,7 @@ func (mcb *ModelCreateBulk) Save(ctx context.Context) ([]*Model, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (mcb *ModelCreateBulk) SaveX(ctx context.Context) []*Model {
+func (mcb *ModelsCreateBulk) SaveX(ctx context.Context) []*Models {
 	v, err := mcb.Save(ctx)
 	if err != nil {
 		panic(err)
