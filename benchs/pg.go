@@ -3,7 +3,7 @@ package benchs
 import (
 	"fmt"
 
-	"gopkg.in/pg.v4"
+	pg "github.com/go-pg/pg/v10"
 )
 
 var pgdb *pg.DB
@@ -17,12 +17,13 @@ func init() {
 		st.AddBenchmark("Read", 4000*ORM_MULTI, PgRead)
 		st.AddBenchmark("MultiRead limit 100", 2000*ORM_MULTI, PgReadSlice)
 
-		pgdb = pg.Connect(&pg.Options{
+		db := pg.Connect(&pg.Options{
 			Addr:     "localhost:5432",
 			User:     "postgres",
 			Password: "postgres",
 			Database: "test",
 		})
+		pgdb = db
 	}
 }
 
@@ -35,7 +36,7 @@ func PgInsert(b *B) {
 
 	for i := 0; i < b.N; i++ {
 		m.Id = 0
-		if err := pgdb.Create(&m); err != nil {
+		if _, err := pgdb.Model(m).Insert(); err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
@@ -43,17 +44,19 @@ func PgInsert(b *B) {
 }
 
 func PgInsertMulti(b *B) {
-	var ms []*Model
+	var ms []interface{}
 	wrapExecute(b, func() {
 		initDB()
 	})
 
 	for i := 0; i < b.N; i++ {
-		ms = make([]*Model, 0, 100)
+		ms = make([]interface{}, 0, 100)
 		for i := 0; i < 100; i++ {
-			ms = append(ms, NewModel())
+			var m interface{} = NewModel()
+			ms = append(ms, m)
 		}
-		if err := pgdb.Create(&ms); err != nil {
+		_, err := pgdb.Model(ms...).Insert()
+		if err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
@@ -65,14 +68,15 @@ func PgUpdate(b *B) {
 	wrapExecute(b, func() {
 		initDB()
 		m = NewModel()
-		if err := pgdb.Create(&m); err != nil {
+		if _, err := pgdb.Model(m).Insert(); err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
 	})
 
 	for i := 0; i < b.N; i++ {
-		if err := pgdb.Update(&m); err != nil {
+		_, err := pgdb.Model(m).WherePK().Update()
+		if err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
@@ -84,14 +88,15 @@ func PgRead(b *B) {
 	wrapExecute(b, func() {
 		initDB()
 		m = NewModel()
-		if err := pgdb.Create(&m); err != nil {
+		if _, err := pgdb.Model(m).Insert(); err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
 	})
 
 	for i := 0; i < b.N; i++ {
-		if err := pgdb.Select(&m); err != nil {
+		err := pgdb.Model(m).WherePK().Select()
+		if err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
@@ -105,7 +110,7 @@ func PgReadSlice(b *B) {
 		m = NewModel()
 		for i := 0; i < 100; i++ {
 			m.Id = 0
-			if err := pgdb.Create(&m); err != nil {
+			if _, err := pgdb.Model(m).Insert(); err != nil {
 				fmt.Println(err)
 				b.FailNow()
 			}
@@ -114,7 +119,8 @@ func PgReadSlice(b *B) {
 
 	for i := 0; i < b.N; i++ {
 		var models []*Model
-		if err := pgdb.Model(&models).Where("id > ?", 0).Limit(100).Select(); err != nil {
+		err := pgdb.Model(&models).Where("id > ?", 0).Limit(100).Select()
+		if err != nil {
 			fmt.Println(err)
 			b.FailNow()
 		}
